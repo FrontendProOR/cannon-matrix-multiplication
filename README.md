@@ -43,3 +43,53 @@ Dat je problem množenja matrica C = A x B dimenzije N x N. Klasična sekvencija
 - Gustafsonov zakon: S(p) ≤ p − s * ( p − 1 ).
 
 ### Vizualizacija: crtanje grafika u Rust-u uz plotters.
+
+# Beleske za Odbranu, Pokretanje, Prezentaciju i Testiranje:
+## 0. Priprema okruzenja:
+### U root od projekta 
+- `cd python`
+- `python -m venv .venv` kreiramo virtuelno okruzenje u folderu .venv
+- Za Windows PowerShell:
+- `. .venv/Scripts/Activate.ps1` aktivira virtuelno okruzenje
+- Za Linux/macOS:
+- `source .venv/bin/activate` aktivira virtuelno okruzenje
+- `pip install -r requirements.txt` skidanje zavisnosti numpy,...
+
+## 1. Smoke Test Sekvencijalne verzije(za 6):
+- Terminal komanda: `python cannon_seq.py --n 256 --bs 64`
+- Ocekivani rezultat: time_sec=...
+- Moj rezultat: time_sec=0.001516
+- Uglavnom oko ~0.0015 gore dole +-0.0001s
+
+## 2. Smoke test paralelne verzije + verifikacija
+- Terminal komanda: `python cannon_mp.py --n 256 --q 2 --verify`
+- Ocekivani rezultat: 
+time_sec=...
+verify_err=...
+ok=True
+- Moj rezultat:
+time_sec=0.474708
+verify_err=0.000e+00,
+ok=True
+- Uglavnom je time_sec=~0.46 (+-0.01s)
+
+## 3. Brz Strong scaling sanity-check
+Terminal komanda: `python bench_py.py --mode strong_py --n 512 --bs 64 --q_list 1,2,4 --reps 5 --out ../data/logs/strong_py_quick.csv`
+- Rezultat u fajlu:` data/logs/strong_py_quick.csv `
+- heder sadrži:
+- mode,N,q,p,seq_mean,seq_stdev,par_mean,par_stdev,speedup,used_samples
+- speedup raste otprilike sa p=1,4,16
+
+## 4. Brz Weak scaling sanity-check
+Terminal komanda: `python bench_py.py --mode weak_py --bs 64 --q_list 1,2,4 --reps 5 --out ../data/logs/weak_py_quick.csv`
+- Rezultat u fajlu: `data/logs/weak_py_quick.csv`
+
+## 5. Generisanje traga promena stanja
+- `python cannon_seq.py --n 256 --bs 64 --trace ../data/logs/trace_seq_py.csv`
+- time_sec=0.018640
+- `python cannon_mp.py  --n 256 --q 2 --trace ../data/logs/trace_mp_py.csv`
+- time_sec=0.475360
+### CSV fajlovi:
+- trace_seq_py.csv: step,frob_C
+
+- trace_mp_py.csv: phase,worker_idx,frob_C_loc
