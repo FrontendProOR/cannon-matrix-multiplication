@@ -1,0 +1,2 @@
+mode,N,q,p,seq_mean,par_mean,speedup
+weak,1024,4,16,0.291455,0.184478,1.579892

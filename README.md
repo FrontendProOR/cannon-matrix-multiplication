@@ -44,7 +44,8 @@ Dat je problem množenja matrica C = A x B dimenzije N x N. Klasična sekvencija
 
 ### Vizualizacija: crtanje grafika u Rust-u uz plotters.
 
-# Beleske za Odbranu, Pokretanje, Prezentaciju i Testiranje:
+# Beleske za Odbranu:
+# Za ocenu (6):
 ## 0. Priprema okruzenja:
 ### U root od projekta 
 - `cd python`
@@ -93,3 +94,164 @@ Terminal komanda: `python bench_py.py --mode weak_py --bs 64 --q_list 1,2,4 --re
 - trace_seq_py.csv: step,frob_C
 
 - trace_mp_py.csv: phase,worker_idx,frob_C_loc
+
+# Za ocenu (7):
+## 1) Build okruženja
+
+- Kompajliranje u release modu
+
+- Terminal Komanda:
+`
+cargo clean
+`
+,
+`
+cargo build --release
+`
+
+- Očekivani izlaz:
+Finished 'release' profile ... itd.
+
+## 2) Sekvencijalno množenje vreme izvršavanja
+
+1. Pokretanje sekvencijalne verzije
+
+- Terminal Komanda:
+`
+./target/release/cannon_seq 1024 128
+`
+
+(format i parametri: `cannon_seq N BS`)
+
+- Očekivani izlaz:
+`
+time_sec=0.XXXXX
+`
+- Moj rezultat: time_sec=0.286605
+***
+2. Sekvencijalno sa trace (fajl promena stanja)
+
+- Terminal Komanda:
+`
+./target/release/cannon_seq 512 128 ../data/logs/trace_seq_rs.csv
+`
+
+- Očekivani izlaz:
+`
+time_sec=0.XXXXX
+`
+- Moj rezultat: time_sec=0.037944
+
+- i kreiran fajl `../data/logs/trace_seq_rs.csv` sa zaglavljem:
+`
+step,frob_C
+`
+
+i više redova sa numeričkim vrednostima.
+
+- Moj rezultat je u fajlu sa putanjom: `../data/logs/trace_seq_rs.csv `
+
+## 3) Paralelno množenje ( threads) vreme izvršavanja
+
+### 1. Pokretanje paralelne verzije za više q (Ryzen 7 5800U → koristi q=1,2,4)
+
+- Terminal Komanda (q=1):
+`
+./target/release/cannon_threads 1024 1
+`
+
+(format: `cannon_threads N Q`, broj niti je p = Q*Q)
+
+- Očekivani izlaz:
+
+time_sec=0.XXXXX
+
+
+- Moj rezultat: time_sec=0.259688
+***
+- Terminal Komanda (q=2):
+`
+./target/release/cannon_threads 1024 2
+`
+
+- Očekivani izlaz: time_sec=0.XXXXX
+
+
+- Moj rezultat: time_sec=0.082388 prvi put ovo je outlier
+ovo je kasnije pet puta 
+time_sec=0.155444
+***
+- Terminal Komanda (q=4):
+`
+./target/release/cannon_threads 1024 4
+`
+
+- Očekivani izlaz: time_sec=0.XXXXX
+
+
+- Moj rezultat: time_sec=0.126123
+
+### 2. Paralelno sa trace (fajl promena stanja po fazama)
+
+- Terminal Komanda:
+`
+./target/release/cannon_threads 512 2 ../data/logs/trace_mp_rs.csv
+`
+
+- Očekivani izlaz: time_sec=0.XXXXX
+- Moj rezultat: time_sec=0.014810
+
+i kreiran fajl `../data/logs/trace_mp_rs.csv` sa zaglavljem:
+`
+phase,frob_C_loc
+`
+
+i više redova sa numeričkim vrednostima.
+
+Moj rezultat je u fajlu sa putanjom: `../data/logs/trace_mp_rs.csv`
+
+## 4) Brzi uporedni benchmark CSV
+
+### Jako skaliranje Rust (q=1,2,4)
+
+- Terminal Komanda(deo sa 1,2,4 je koliko je q tj. jezgra ili koliko fizickih core-ova, N broj redova i kolona):
+`
+./target/release/bench_rs strong_rs 1,2,4 1024 128 ../data/logs/strong_rs_quick.csv
+`
+
+(format: `bench_rs strong_rs Q_LIST N BS OUT_CSV`)
+
+### Očekivani izlaz:
+
+Kreira CSV `../data/logs/strong_rs_quick.csv` sa zaglavljem:
+`
+mode,N,q,p,seq_mean,par_mean,speedup
+`
+
+i redovima sa numerikom.
+
+- Moj rezultat je u fajlu sa putanjom:` ../data/logs/strong_rs_quick.csv`
+- q=1 -> `time_sec=0.235677`
+- q=2 -> `time_sec=0.074133`
+- q=4 -> `time_sec=0.105194`
+
+### Slabo skaliranje Rust (q=1,2,4)
+
+- Terminal Komanda ( 3 parametar q se pise jedna cifra 1,2,3 koliko jezgara):
+`
+./target/release/bench_rs weak_rs 1,2,4 1024 128 ../data/logs/weak_rs_quick.csv
+`
+
+### Očekivani izlaz:
+
+Kreira CSV `../data/logs/weak_rs_quick.csv` sa 
+zaglavljem:
+
+`
+mode,N,q,p,seq_mean,par_mean,speedup
+`
+
+- Moj rezultat je u fajlu sa putanjom:` ../data/logs/weak_rs_quick.csv`
+- q=1 -> `time_sec=0.004950`
+- q=2 -> `time_sec=0.012934`
+- q=4 -> `time_sec=0.123387`

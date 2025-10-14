@@ -1,0 +1,2 @@
+mode,N,q,p,seq_mean,par_mean,speedup
+strong,1024,4,16,0.311777,0.168235,1.853225
