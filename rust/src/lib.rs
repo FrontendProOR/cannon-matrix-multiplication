@@ -6,9 +6,7 @@ use std::time::Instant;
 pub fn gen_matrix(n: usize, seed: u64) -> Vec<f64> {
     let mut rng = StdRng::seed_from_u64(seed);
     let mut a = vec![0.0_f64; n*n];
-    // for x in &mut a { *x = rng.gen::<f64>(); }
     for x in &mut a { *x = rng.random::<f64>(); }
-
     a
 }
 

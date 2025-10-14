@@ -2,7 +2,7 @@
 ## Tema
 Implementacija Kanonovog algoritma za množenje matrica u Python-u i Rust-u sa ciljem analize performansi i skalabilnosti.
 
-## Za ocenu: 10
+## Za ocenu: 9
 
 ## Problem
 Dat je problem množenja matrica C = A x B dimenzije N x N. Klasična sekvencijalna složenost je O(N^3). 
@@ -255,3 +255,35 @@ mode,N,q,p,seq_mean,par_mean,speedup
 - q=1 -> `time_sec=0.004950`
 - q=2 -> `time_sec=0.012934`
 - q=4 -> `time_sec=0.123387`
+
+# Za ocenu (9)
+### Terminal komande za testiranje:
+`
+cargo build --release
+`
+***
+- Komanda za strong:
+`
+./target/release/bench_rs strong_rs 1,2,4 1024 128 30 ../data/logs/strong_rs.csv
+`
+- Rezultati u `../data/logs/strong_rs.csv`
+- U terminalu:
+`time_sec=0.589572`   
+`time_sec=0.584396`   
+`time_sec=0.656565`   
+`time_sec=0.594633`   
+`time_sec=0.550159`   
+od nekih pola je trostruko smanjeno vreme ovako 30 puta
+***
+- Komanda za weak:
+`
+./target/release/bench_rs weak_rs   1,2,4 1024 128 30 ../data/logs/weak_rs.csv
+`
+- Rezultati u ../data/logs/weak_rs.csv 
+- U terminalu:
+`time_sec=0.067304`
+`time_sec=0.068339`
+`time_sec=0.066087`
+`time_sec=0.064980`
+`time_sec=0.068660`
+ovako 30 puta od pola je duplo krace vreme

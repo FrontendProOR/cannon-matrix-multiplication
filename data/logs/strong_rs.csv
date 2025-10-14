@@ -1,0 +1,2 @@
+mode,N,q,p,seq_mean,seq_stdev,seq_min,seq_max,seq_outliers3s,par_mean,par_stdev,par_min,par_max,par_outliers3s,speedup
+strong_rs,1024,2,4,0.678960,0.042740,0.642539,0.835891,1,0.261272,0.034335,0.217245,0.424429,1,2.598671
