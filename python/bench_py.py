@@ -1,7 +1,9 @@
 import argparse, time
 from utils_io import write_csv
 
-
+# Višestruka merenja funkcije fn(), sa detekcijom i izbacivanjem outlier-a.
+# Sortira vremena, računa IQR i zadržava vrednosti u [Q1-1.5*IQR, Q3+1.5*IQR].
+# Vraća srednju vrednost, standardnu devijaciju i broj zadržanih uzoraka.
 def timings(fn, reps=30):
     vals = []
     for _ in range(reps):
@@ -30,13 +32,15 @@ if __name__ == "__main__":
 
     rows = []
     if args.mode == 'strong_py':
+        # Jako skaliranje: n je fiksno; menjamo q → p=q*q.
         for q in [int(x) for x in args.q_list.split(',')]:
             seq = timings(lambda: run_seq(args.n, args.bs, args.seed)[1], args.reps)
             par = timings(lambda: run_mp(args.n, q, args.seed)[1], args.reps)
             S = (seq['mean']/par['mean']) if par['mean']>0 else 0
             rows.append(("strong", args.n, q, q*q, seq['mean'], seq['stdev'], par['mean'], par['stdev'], S, par['n']))
     else:
-        base_b = args.bs*2
+        # Slabo skaliranje: dimenzija raste ~ proporcionalno q tako da je posao po jezgri konstantan.
+        base_b = args.bs*2 # bazični korak dimenzije; efektivno n = base_b * q
         for q in [int(x) for x in args.q_list.split(',')]:
             n = base_b * q
             seq = timings(lambda: run_seq(n, args.bs, args.seed)[1], args.reps)
@@ -44,6 +48,7 @@ if __name__ == "__main__":
             S = (seq['mean']/par['mean']) if par['mean']>0 else 0
             rows.append(("weak", n, q, q*q, seq['mean'], seq['stdev'], par['mean'], par['stdev'], S, par['n']))
 
+    #CSV izlaz uključuje prosek, stdev, broj uzoraka posle outlier filtera i speedup.
     header = "mode,N,q,p,seq_mean,seq_stdev,par_mean,par_stdev,speedup,used_samples"
     write_csv(args.out, header, rows)
     print(f"wrote {args.out}")

@@ -4,12 +4,15 @@ use std::io::Write;
 use std::process::Command;
 use std::time::Instant;
 
+// Merenje jednog izvršavanja funkcije f u sekundama.
 fn time_once<F: FnOnce()>(f: F) -> f64 {
     let t0 = Instant::now();
     f();
     t0.elapsed().as_secs_f64()
 }
 
+// Računa srednju vrednost i standardnu devijaciju skupa vrednosti.
+// Vraća (mean, stdev).
 fn mean_stdev(vals: &[f64]) -> (f64, f64) {
     let n = vals.len() as f64;
     let m = vals.iter().sum::<f64>() / n;
@@ -17,6 +20,8 @@ fn mean_stdev(vals: &[f64]) -> (f64, f64) {
     (m, v.sqrt())
 }
 
+// Broji koliko je vrednosti u skupu outliera van 3σ od srednje vrednosti.
+// Vraća broj outliera.
 fn count_outliers_3sigma(vals: &[f64], mean: f64, stdev: f64) -> usize {
     if stdev == 0.0 { return 0; }
     let low = mean - 3.0 * stdev;
@@ -24,6 +29,12 @@ fn count_outliers_3sigma(vals: &[f64], mean: f64, stdev: f64) -> usize {
     vals.iter().filter(|&&x| x < low || x > high).count()
 }
 
+// CLI: `bench_rs <strong_rs|weak_rs> <q_list> <n> <bs> <reps> <out_csv>`
+// Poziva izdvojene binare `cannon_seq` i `cannon_threads` i upisuje prošireni CSV.
+// Merenje vremena izvršavanja sekvencijalnog i paralelnog algoritma za različite Q.
+// Podržani režimi: strong scaling (fiksno N, menja se Q) i weak scaling (N = base_b * Q).
+// Rezultati: srednja vrednost, stdev, min, max, broj outliera 3σ i speedup.
+// Primer: `bench_rs strong_rs 1,2,4 1024 128 30 ../data/logs/bench_rs.csv`
 fn main() {
     // usage:
     // bench_rs <strong_rs|weak_rs> <q_list> <n> <bs> <reps> <out_csv>
@@ -37,6 +48,7 @@ fn main() {
 
     create_dir_all("../data/logs").ok();
     let mut f = File::create(out).unwrap();
+    // Header : mean, stdev, min, max, outliers 3σ i speedup
     // Dodali smo stdev + min/max + broj outliera 3σ
     writeln!(
         f,

@@ -1,7 +1,8 @@
 use rust::*;
 use std::env;
 
-
+// CLI: `cannon_seq N [BS] [TRACE_CSV]`
+// Generiše A,B, pokreće sekvencijalno blok množenje, meri vreme i štampa `time_sec=...`.
 fn main() {
 let n: usize = env::args().nth(1).expect("n").parse().unwrap();
 let bs: usize = env::args().nth(2).unwrap_or("128".into()).parse().unwrap();
