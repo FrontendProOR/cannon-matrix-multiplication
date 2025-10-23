@@ -42,7 +42,15 @@ Dat je problem množenja matrica C = A x B dimenzije N x N. Klasična sekvencija
 
 - Gustafsonov zakon: S(p) ≤ p − s * ( p − 1 ).
 
-### Vizualizacija: crtanje grafika u Rust-u uz plotters.
+# Podatci sistema na kom se testiralo
+RAM 16 GB DDR4 3200 Mt/s
+AMD Ryzen 7 5800U with Radeon Graphics Cores 8 Threads 16
+( iz nekog razloga sam do sad mislio da ima samo 4 jer sam radio prvo na desktop verziji starog amd procesora ryzen 5 2400g koji ima 4 jezgra ali rezultai su uglavnom sa procesora od laptopa 1,2,4 a mogao sam i 2,4,8 al eto mrsko mi sve pokretati opet i generisati grafike)
+Integrated Ryzen graphics  500MB
+neki nepoznat stock SSD 512GB
+
+# Vizualizacija uradjena u numpy matplotlib u python-u u notebooks su 4 grafika za svaki tip skaliranja.
+
 
 # Beleske za Odbranu:
 # Za ocenu (6):
