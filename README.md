@@ -49,7 +49,7 @@ AMD Ryzen 7 5800U with Radeon Graphics Cores 8 Threads 16
 Integrated Ryzen graphics  500MB
 neki nepoznat stock SSD 512GB
 
-# Vizualizacija uradjena u numpy matplotlib u python-u u notebooks su 4 grafika za svaki tip skaliranja.
+# Vizualizacija uradjena u numpy,pandas i matplotlib u python-u u notebooks su 4 grafika za svaki tip skaliranja.
 
 
 # Beleske za Odbranu:
